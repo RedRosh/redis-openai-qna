@@ -2,7 +2,7 @@ redis>=4.5.4
 streamlit==1.18.0
 altair==4
 python-dotenv==0.21.0
-langchain==0.0.153
+langchain==0.0.266
 sentence-transformers==2.2.2
 tenacity
 pandas

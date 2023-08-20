@@ -34,7 +34,7 @@ try:
             }]
         }
 
-    st.image(os.path.join('assets','RedisOpenAI.png'))
+    st.image(os.path.join('app/assets','RedisOpenAI.png'))
 
     col1, col2 = st.columns([4,2])
     with col1:
@@ -45,7 +45,7 @@ try:
     #         st.temperature = st.slider("Temperature", 0.0, 1.0, 0.1)
 
 
-    question = st.text_input("*Ask thoughtful questions about the **2020 Summer Olympics***", default_question)
+    question = st.text_input("*Ask thoughtful questions about the **cities' ranks***", default_question)
 
     if question != '':
         if question != st.session_state['question']:
@@ -78,7 +78,7 @@ try:
         See the reference architecture diagram below for more context.
     """)
 
-    st.image(os.path.join('assets', 'RedisOpenAI-QnA-Architecture.drawio.png'))
+    st.image(os.path.join('app/assets', 'RedisOpenAI-QnA-Architecture.drawio.png'))
 
 
 

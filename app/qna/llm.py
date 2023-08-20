@@ -5,8 +5,14 @@ from langchain.schema import Document
 from langchain.llms.base import LLM
 from langchain.embeddings.base import Embeddings
 from typing import List
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.document_loaders import CSVLoader
+import pandas as pd
+
 
 # Env Vars and constants
+chunk_size = 1000
+chunk_overlap = 100
 CACHE_TYPE = os.getenv("CACHE_TYPE")
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
@@ -60,22 +66,37 @@ def get_cache():
 
 
 def get_documents() -> List[Document]:
-    import pandas as pd
-    # Load and prepare wikipedia documents
-    datasource = pd.read_csv(
-        "https://cdn.openai.com/API/examples/data/olympics_sections_text.csv"
-    ).to_dict("records")
-    # Create documents
+  
+    df = pd.read_csv(os.path.join('app/docs', 'bop500-dev.gen_final_ranking_table_v2.csv'))
+
     documents = [
         Document(
-            page_content=doc["content"],
+            page_content=  "\n".join(f"{k.strip()}: {row.get(k)}" for k in row.keys()) ,
             metadata={
-                "title": doc["title"],
-                "heading": doc["heading"],
-                "tokens": doc["tokens"]
+                "cityName": row["cityName"],
+                "indicatorName": row["indicatorName"],
             }
-        ) for doc in datasource
+        )  for _, row in df.iterrows() if not pd.isna(row["indicatorName"]) and "capita" not in row["indicatorName"]
     ]
+    
+    print(documents[0])
+
+    # loader = CSVLoader(file_path=os.path.join('app/docs', 'bop500-dev.gen_final_ranking_table_v2.csv'),  csv_args={
+    #     "delimiter": ",",       
+    # },)
+    # documents = loader.load()
+
+
+    # for doc in documents:
+    #     doc.metadata['city name'] = doc[]
+   
+   
+    # print(f"Loaded {len(documents)} new documents")
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    # )
+    # texts = text_splitter.split_documents(documents)
+    # print(f"Split into {len(texts)} chunks of text (max. {chunk_size} tokens each)")
     return documents
 
 
